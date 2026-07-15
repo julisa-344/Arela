@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------
+   Fuentes de marca Arela
+   - Codec Warm: texto de uso general (UI, cuerpo)
+   - TAN Mon Cheri: titulares / acentos de marca
+--------------------------------------------- */
+@font-face {
+  font-family: "Codec Warm";
+  src: url("/fonts/codec-warm/CodecWarm-Thin.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Codec Warm";
+  src: url("/fonts/codec-warm/CodecWarm-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Codec Warm";
+  src: url("/fonts/codec-warm/CodecWarm-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Codec Warm";
+  src: url("/fonts/codec-warm/CodecWarm-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Codec Warm";
+  src: url("/fonts/codec-warm/CodecWarm-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Codec Warm";
+  src: url("/fonts/codec-warm/CodecWarm-Heavy.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "TAN Mon Cheri";
+  src: url("/fonts/tan-mon-cheri/TANMonCheri-Regular.woff2") format("woff2"),
+    url("/fonts/tan-mon-cheri/TANMonCheri-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Paleta de marca Arela */
+  --color-arela-ink: #2b0a05;
+  --color-arela-rust: #86301c;
+  --color-arela-terracotta: #d1723a;
+  --color-arela-sand: #f2d6a8;
+  --color-arela-honey: #dd9152;
+  --color-arela-cream: #faf3e8;
+  /* Texto casi blanco para usar sobre video/imagenes oscuras (ej. header transparente sobre el hero) */
+  --color-arela-white: #fdfbf7;
+
+  --background: var(--color-arela-cream);
+  --foreground: var(--color-arela-ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-arela-ink: var(--color-arela-ink);
+  --color-arela-rust: var(--color-arela-rust);
+  --color-arela-terracotta: var(--color-arela-terracotta);
+  --color-arela-sand: var(--color-arela-sand);
+  --color-arela-honey: var(--color-arela-honey);
+  --color-arela-cream: var(--color-arela-cream);
+  --color-arela-white: var(--color-arela-white);
+
+  --font-sans: "Codec Warm", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "TAN Mon Cheri", ui-serif, serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
