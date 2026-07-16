@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Container } from "@/components/layout/Container";
 import { CartIndicator } from "@/components/layout/CartIndicator";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { useAuth } from "@/lib/auth-context";
 import { NAV_LINKS, SITE } from "@/shared/constants/site";
 import { cn } from "@/lib/cn";
 import { TRANSPARENT_OVER_HERO_PATHS } from "@/shared/constants/layout";
@@ -12,6 +14,8 @@ import { TRANSPARENT_OVER_HERO_PATHS } from "@/shared/constants/layout";
 export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const hasHero = TRANSPARENT_OVER_HERO_PATHS.includes(pathname);
 
@@ -62,8 +66,49 @@ export function Header() {
           ))}
         </nav>
 
-        <CartIndicator light={isTransparent} />
+        <div className="flex items-center gap-4">
+          {/* Auth Button/Profile */}
+          {user ? (
+            <div className="relative flex items-center gap-3">
+              <button
+                onClick={() => signOut()}
+                className={cn(
+                  "text-xs uppercase tracking-widest transition-colors hover:text-arela-rust",
+                  isTransparent ? "text-arela-white" : "text-arela-ink"
+                )}
+              >
+                Salir
+              </button>
+              <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-current">
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt={user.displayName || 'Usuario'} className="h-full w-full object-cover" />
+                ) : (
+                  <div className={cn(
+                    "flex h-full w-full items-center justify-center text-xs",
+                    isTransparent ? "bg-arela-white text-arela-ink" : "bg-arela-ink text-arela-cream"
+                  )}>
+                    {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              className={cn(
+                "text-xs uppercase tracking-widest transition-colors hover:text-arela-rust",
+                isTransparent ? "text-arela-white" : "text-arela-ink"
+              )}
+            >
+              Ingresar
+            </button>
+          )}
+
+          <CartIndicator light={isTransparent} />
+        </div>
       </Container>
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </header>
   );
 }

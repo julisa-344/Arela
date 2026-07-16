@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { MainOffset } from "@/components/layout/MainOffset";
 import { WhatsappFloatingButton } from "@/components/layout/WhatsappFloatingButton";
 import { CartProvider } from "@/lib/cart-context";
+import { AuthProvider } from "@/lib/auth-context";
 import { SITE } from "@/shared/constants/site";
 
 export const metadata: Metadata = {
@@ -20,12 +21,14 @@ export default function RootLayout({
   return (
     <html lang="es" className="h-full antialiased">
       <body className="flex min-h-full flex-col bg-arela-cream text-arela-ink">
-        <CartProvider>
-          <Header />
-          <MainOffset>{children}</MainOffset>
-          <Footer />
-          <WhatsappFloatingButton />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Header />
+            <MainOffset>{children}</MainOffset>
+            <Footer />
+            <WhatsappFloatingButton />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );
