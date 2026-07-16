@@ -1,23 +1,18 @@
 /**
  * Script para poblar datos iniciales en Firebase
+ * Requiere scripts/serviceAccountKey.json (Firebase Console > Configuración
+ * del proyecto > Cuentas de servicio > Generar nueva clave privada)
  * Ejecutar: npx tsx scripts/seed-firebase.ts
  */
 
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc, Timestamp } from 'firebase/firestore';
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
+import serviceAccount from './serviceAccountKey.json' with { type: 'json' };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyB8JN4wA5E0990u4s7lHozEXTkfBzZ3LDA",
-  authDomain: "materialize-blog-5ad8a.firebaseapp.com",
-  projectId: "materialize-blog-5ad8a",
-  storageBucket: "materialize-blog-5ad8a.firebasestorage.app",
-  messagingSenderId: "855635108581",
-  appId: "1:855635108581:web:1fa5e4e70fb338be04ea0c",
-  measurementId: "G-1BYSV65DR2"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+initializeApp({
+  credential: cert(serviceAccount as any),
+});
+const db = getFirestore();
 
 async function seedCategories() {
   console.log('🌱 Creando categorías...');
@@ -53,7 +48,7 @@ async function seedCategories() {
   ];
 
   for (const category of categories) {
-    await setDoc(doc(db, 'categories', category.id), {
+    await db.collection('categories').doc(category.id).set({
       ...category,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
@@ -74,7 +69,7 @@ async function seedBrands() {
   ];
 
   for (const brand of brands) {
-    await setDoc(doc(db, 'brands', brand.id), {
+    await db.collection('brands').doc(brand.id).set({
       ...brand,
       isActive: true,
       productCount: 0,
@@ -137,7 +132,7 @@ async function seedShippingZones() {
   ];
 
   for (const zone of zones) {
-    await setDoc(doc(db, 'shippingZones', zone.id), zone);
+    await db.collection('shippingZones').doc(zone.id).set(zone);
     console.log(`✅ Zona de envío creada: ${zone.name}`);
   }
 }
@@ -279,7 +274,7 @@ async function seedExampleProducts() {
   ];
 
   for (const product of products) {
-    await setDoc(doc(db, 'products', product.id), {
+    await db.collection('products').doc(product.id).set({
       ...product,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),

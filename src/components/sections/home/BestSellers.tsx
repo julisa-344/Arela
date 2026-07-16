@@ -4,8 +4,8 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { getAllProducts } from "@/lib/products";
 
-export function BestSellers() {
-  const products = getAllProducts();
+export async function BestSellers() {
+  const products = (await getAllProducts()).slice(0, 4);
 
   return (
     <section className="py-20">

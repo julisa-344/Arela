@@ -1,66 +1,114 @@
-import type { Product } from "@/shared/types/product";
+import { collection, getDocs, query, where, limit } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+import { COLLECTIONS } from "@/lib/firebase/constants";
+import { categoriesService, brandsService } from "@/lib/firebase/services/catalog.service";
+import type { Product as FirestoreProduct } from "@/shared/types/firebase";
+import type { Product, ProductVariantOption } from "@/shared/types/product";
 
-// TODO: reemplazar por datos reales (CMS, API o archivo de catalogo definitivo)
-export const PRODUCTS: Product[] = [
-  {
-    slug: "gel-limpiador-iluminador",
-    name: "Gel limpiador iluminador",
-    category: "skincare",
-    tags: ["iluminar", "limpieza"],
-    price: 89,
-    image: "/products/1.png",
-    shortDescription: "Limpieza suave que ilumina e hidrata la piel.",
-    description:
-      "Gel limpiador de uso diario formulado con ingredientes naturales que respetan la barrera cutanea, dejando la piel limpia, luminosa e hidratada.",
-    size: "120 ml",
-  },
-  {
-    slug: "serum-unificador",
-    name: "Serum unificador de tono",
-    category: "skincare",
-    tags: ["unificar", "poros"],
-    price: 99,
-    image: "/products/placeholder-2.svg",
-    shortDescription: "Unifica el tono y minimiza la apariencia de los poros.",
-    description:
-      "Serum ligero de rapida absorcion que ayuda a unificar el tono de la piel y afinar la textura visible de los poros.",
-    size: "50 ml",
-  },
-  {
-    slug: "set-glow-natural",
-    name: "Set glow natural",
-    category: "sets",
-    tags: ["glow natural"],
-    price: 199,
-    compareAtPrice: 240,
-    image: "/products/placeholder-3.svg",
-    shortDescription: "Ritual completo para un brillo natural y saludable.",
-    description:
-      "Set de 3 pasos pensado para lograr un glow natural: limpieza, tratamiento y proteccion en una sola rutina.",
-    size: "3 productos",
-  },
-  {
-    slug: "aceite-de-dia-protector",
-    name: "Aceite de dia protector",
-    category: "skincare",
-    tags: ["proteger", "iluminar"],
-    price: 69,
-    image: "/products/placeholder-4.svg",
-    shortDescription: "Proteccion diaria con acabado luminoso.",
-    description:
-      "Aceite facial ligero que protege la piel de los agresores diarios mientras aporta un acabado radiante, no graso.",
-    size: "30 ml",
-  },
-];
+const PLACEHOLDER_IMAGE = "/products/placeholder-2.svg";
 
-export function getAllProducts() {
-  return PRODUCTS;
+function toDisplayProduct(fp: FirestoreProduct): Product {
+  const variants: ProductVariantOption[] = fp.hasVariants
+    ? fp.variants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        price: v.price,
+        compareAtPrice: v.compareAtPrice,
+        stock: v.stock,
+        image: v.images?.[0],
+      }))
+    : [];
+
+  const cheapestVariant = variants.length
+    ? variants.reduce((min, v) => (v.price < min.price ? v : min), variants[0])
+    : null;
+
+  const price = cheapestVariant ? cheapestVariant.price : fp.basePrice ?? 0;
+  const compareAtPrice = cheapestVariant ? cheapestVariant.compareAtPrice : fp.compareAtPrice;
+  const image = cheapestVariant?.image || fp.thumbnail || fp.images?.[0] || PLACEHOLDER_IMAGE;
+  const gallery = fp.images?.length ? fp.images : [image];
+  const inStock = fp.hasVariants
+    ? variants.some((v) => v.stock > 0)
+    : (fp.baseStock ?? 0) > 0;
+
+  return {
+    id: fp.id,
+    slug: fp.slug,
+    name: fp.name,
+    brandId: fp.brandId,
+    brandName: fp.brandName,
+    categoryId: fp.categoryId,
+    categoryName: fp.categoryName,
+    tags: fp.tags ?? [],
+    price,
+    compareAtPrice,
+    image,
+    gallery,
+    shortDescription: fp.shortDescription || fp.description.slice(0, 140),
+    description: fp.description,
+    size: cheapestVariant?.name,
+    benefits: fp.benefits ?? [],
+    ingredients: fp.ingredients,
+    howToUse: fp.howToUse,
+    isFeatured: fp.isFeatured,
+    isNew: fp.isNew,
+    inStock,
+    hasVariants: fp.hasVariants,
+    variants,
+  };
 }
 
-export function getProductBySlug(slug: string) {
-  return PRODUCTS.find((product) => product.slug === slug);
+export type SortOrder = "relevancia" | "precio-asc" | "precio-desc";
+
+interface GetProductsOptions {
+  categoryId?: string;
+  brandId?: string;
+  sort?: SortOrder;
 }
 
-export function getProductsByCategory(category: string) {
-  return PRODUCTS.filter((product) => product.category === category);
+export async function getAllProducts(options: GetProductsOptions = {}): Promise<Product[]> {
+  const constraints = [where("isActive", "==", true)];
+
+  if (options.categoryId) constraints.push(where("categoryId", "==", options.categoryId));
+  if (options.brandId) constraints.push(where("brandId", "==", options.brandId));
+
+  const q = query(collection(db, COLLECTIONS.PRODUCTS), ...constraints);
+  const snapshot = await getDocs(q);
+  const products = snapshot.docs.map((doc) =>
+    toDisplayProduct({ id: doc.id, ...doc.data() } as FirestoreProduct)
+  );
+
+  switch (options.sort) {
+    case "precio-asc":
+      return products.sort((a, b) => a.price - b.price);
+    case "precio-desc":
+      return products.sort((a, b) => b.price - a.price);
+    default:
+      return products.sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured));
+  }
+}
+
+export async function getProductsByCategory(categoryId: string): Promise<Product[]> {
+  return getAllProducts({ categoryId });
+}
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const q = query(
+    collection(db, COLLECTIONS.PRODUCTS),
+    where("slug", "==", slug),
+    where("isActive", "==", true),
+    limit(1)
+  );
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return null;
+  const doc = snapshot.docs[0];
+  return toDisplayProduct({ id: doc.id, ...doc.data() } as FirestoreProduct);
+}
+
+export async function getAllCategories() {
+  return categoriesService.getAll();
+}
+
+export async function getAllBrands() {
+  return brandsService.getAll();
 }
