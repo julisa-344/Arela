@@ -79,7 +79,11 @@ export function Header() {
               >
                 Salir
               </button>
-              <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-current">
+              <Link
+                href="/cuenta"
+                aria-label="Mi cuenta"
+                className="h-8 w-8 shrink-0 overflow-hidden rounded-full border-2 border-current transition-opacity hover:opacity-80"
+              >
                 {user.photoURL ? (
                   <img src={user.photoURL} alt={user.displayName || 'Usuario'} className="h-full w-full object-cover" />
                 ) : (
@@ -90,7 +94,7 @@ export function Header() {
                     {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
                   </div>
                 )}
-              </div>
+              </Link>
             </div>
           ) : (
             <button

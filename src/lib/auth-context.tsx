@@ -25,7 +25,8 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  updateUserProfile: (displayName?: string, photoURL?: string) => Promise<void>;
+  updateUserProfile: (updates: { displayName?: string; phone?: string; photoURL?: string }) => Promise<void>;
+  refreshUserData: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -113,20 +114,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateUserProfile = async (displayName?: string, photoURL?: string) => {
+  const refreshUserData = async () => {
+    if (!user) return;
+    const data = await usersService.getById(user.uid);
+    setUserData(data);
+  };
+
+  const updateUserProfile = async (updates: { displayName?: string; phone?: string; photoURL?: string }) => {
     if (!user) throw new Error('No hay usuario autenticado');
 
     try {
-      await updateProfile(user, {
-        ...(displayName && { displayName }),
-        ...(photoURL && { photoURL }),
-      });
+      if (updates.displayName || updates.photoURL) {
+        await updateProfile(user, {
+          ...(updates.displayName && { displayName: updates.displayName }),
+          ...(updates.photoURL && { photoURL: updates.photoURL }),
+        });
+      }
 
       // Actualizar en Firestore
-      await usersService.createOrUpdate(user.uid, {
-        ...(displayName && { displayName }),
-        ...(photoURL && { photoURL }),
-      });
+      await usersService.createOrUpdate(user.uid, updates);
+      await refreshUserData();
     } catch (error: any) {
       throw new Error('Error al actualizar perfil');
     }
@@ -142,6 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     resetPassword,
     updateUserProfile,
+    refreshUserData,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
