@@ -18,7 +18,7 @@ const SIZE_STYLES: Record<ButtonSize, string> = {
 };
 
 const BASE_STYLES =
-  "inline-flex items-center justify-center gap-2 rounded-full uppercase tracking-wide transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-full uppercase tracking-wide cursor-pointer shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.97] active:shadow-sm disabled:opacity-50 disabled:pointer-events-none disabled:hover:translate-y-0 disabled:hover:shadow-sm";
 
 interface CommonProps {
   variant?: ButtonVariant;

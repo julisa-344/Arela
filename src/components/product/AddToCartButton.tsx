@@ -9,10 +9,16 @@ export function AddToCartButton({
   product,
   className,
   icon = false,
+  quantity = 1,
+  size = "sm",
+  label = "Agregar",
 }: {
   product: Product;
   className?: string;
   icon?: boolean;
+  quantity?: number;
+  size?: "sm" | "md" | "lg";
+  label?: string;
 }) {
   const { addItem } = useCart();
 
@@ -22,7 +28,7 @@ export function AddToCartButton({
         type="button"
         aria-label={`Agregar ${product.name} al carrito`}
         className={cn("h-10 w-10 rounded-full! p-0! text-lg", className)}
-        onClick={() => addItem(product)}
+        onClick={() => addItem(product, quantity)}
       >
         +
       </Button>
@@ -30,8 +36,13 @@ export function AddToCartButton({
   }
 
   return (
-    <Button type="button" size="sm" className={className} onClick={() => addItem(product)}>
-      Agregar
+    <Button
+      type="button"
+      size={size}
+      className={className}
+      onClick={() => addItem(product, quantity)}
+    >
+      {label}
     </Button>
   );
 }

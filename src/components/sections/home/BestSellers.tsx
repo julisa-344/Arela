@@ -5,7 +5,7 @@ import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { getAllProducts } from "@/lib/products";
 
 export async function BestSellers() {
-  const products = (await getAllProducts()).slice(0, 4);
+  const products = (await getAllProducts()).slice(0, 3);
 
   return (
     <section className="py-20">
@@ -15,7 +15,7 @@ export async function BestSellers() {
           <h2 className="text-2xl">mas vendidos</h2>
         </FadeIn>
 
-        <Stagger className="grid grid-cols-2 gap-8 md:grid-cols-4">
+        <Stagger className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:gap-10">
           {products.map((product) => (
             <StaggerItem key={product.slug}>
               <ProductCard product={product} />

@@ -49,7 +49,7 @@ export default function CarritoPage() {
                 <Link href={`/producto/${item.product.slug}`} className="text-sm uppercase tracking-wide text-arela-ink">
                   {item.product.name}
                 </Link>
-                <span className="text-xs text-arela-ink/50">{formatPrice(item.product.price)}</span>
+                <span className="font-price text-xs text-arela-ink/50">{formatPrice(item.product.price)}</span>
 
                 <div className="mt-2 flex items-center gap-3">
                   <div className="flex items-center rounded-full border border-arela-ink/20">
@@ -61,7 +61,7 @@ export default function CarritoPage() {
                     >
                       -
                     </button>
-                    <span className="w-6 text-center text-sm">{item.quantity}</span>
+                    <span className="font-price w-6 text-center text-sm">{item.quantity}</span>
                     <button
                       type="button"
                       className="px-3 py-1 text-sm"
@@ -82,7 +82,7 @@ export default function CarritoPage() {
                 </div>
               </div>
 
-              <span className="text-sm text-arela-ink">
+              <span className="font-price text-sm text-arela-ink">
                 {formatPrice(item.product.price * item.quantity)}
               </span>
             </div>
@@ -93,7 +93,7 @@ export default function CarritoPage() {
       <FadeIn delay={0.1} className="mt-10 flex flex-col items-end gap-4">
         <div className="flex items-baseline gap-3">
           <span className="text-xs uppercase tracking-widest text-arela-ink/50">Total</span>
-          <span className="text-xl text-arela-ink">{formatPrice(totalPrice)}</span>
+          <span className="font-price text-xl text-arela-ink">{formatPrice(totalPrice)}</span>
         </div>
 
         <Button

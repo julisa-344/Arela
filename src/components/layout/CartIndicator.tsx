@@ -22,7 +22,7 @@ export function CartIndicator({ light = false }: { light?: boolean }) {
         <circle cx="17" cy="21" r="1.4" fill="currentColor" stroke="none" />
       </svg>
       {totalItems > 0 && (
-        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-arela-rust text-[10px] text-arela-sand">
+        <span className="font-price absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-arela-rust text-[10px] text-arela-sand">
           {totalItems}
         </span>
       )}

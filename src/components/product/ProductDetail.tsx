@@ -22,11 +22,14 @@ function CheckIcon() {
   );
 }
 
+type TabKey = "descripcion" | "ingredientes" | "como-usar";
+
 export function ProductDetail({ product }: { product: Product }) {
   const [activeImage, setActiveImage] = useState(0);
   const [selectedVariantId, setSelectedVariantId] = useState(
     product.hasVariants ? product.variants[0]?.id : undefined
   );
+  const [quantity, setQuantity] = useState(1);
 
   const selectedVariant = product.hasVariants
     ? product.variants.find((v) => v.id === selectedVariantId)
@@ -47,8 +50,19 @@ export function ProductDetail({ product }: { product: Product }) {
   const discountPercent = displayProduct.compareAtPrice
     ? Math.round((1 - displayProduct.price / displayProduct.compareAtPrice) * 100)
     : null;
-  const lowStock = selectedVariant ? selectedVariant.stock > 0 && selectedVariant.stock <= 5 : false;
+  const availableStock = selectedVariant ? selectedVariant.stock : product.stock;
+  const lowStock = typeof availableStock === "number" && availableStock > 0 && availableStock <= 5;
   const inStock = selectedVariant ? selectedVariant.stock > 0 : product.inStock;
+  const maxQuantity = typeof availableStock === "number" ? Math.max(availableStock, 1) : 99;
+
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: "descripcion", label: "Descripción" },
+    ...(product.ingredients && product.ingredients.length > 0
+      ? [{ key: "ingredientes" as TabKey, label: "Ingredientes" }]
+      : []),
+    ...(product.howToUse ? [{ key: "como-usar" as TabKey, label: "Cómo usar" }] : []),
+  ];
+  const [activeTab, setActiveTab] = useState<TabKey>("descripcion");
 
   return (
     <div className="grid gap-10 py-16 md:grid-cols-2 md:gap-16">
@@ -59,9 +73,9 @@ export function ProductDetail({ product }: { product: Product }) {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="flex flex-col gap-4"
       >
-        <div className="relative aspect-square overflow-hidden rounded-2xl bg-arela-sand/60">
+        <div className="relative aspect-square overflow-hidden rounded-2xl border border-arela-ink/5 bg-arela-white">
           {discountPercent && discountPercent > 0 && (
-            <span className="absolute left-4 top-4 z-10 rounded-full bg-arela-rust px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-arela-cream">
+            <span className="font-price absolute left-4 top-4 z-10 rounded-full bg-arela-rust px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-arela-cream">
               -{discountPercent}%
             </span>
           )}
@@ -83,7 +97,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 type="button"
                 onClick={() => setActiveImage(index)}
                 className={cn(
-                  "relative h-20 w-20 overflow-hidden rounded-xl bg-arela-sand/60 ring-1 ring-transparent transition-all",
+                  "relative h-20 w-20 cursor-pointer overflow-hidden rounded-xl border border-arela-ink/5 bg-arela-white ring-1 ring-transparent transition-all hover:border-arela-ink/20",
                   activeImage === index && "ring-arela-ink/40"
                 )}
               >
@@ -130,9 +144,9 @@ export function ProductDetail({ product }: { product: Product }) {
         </div>
 
         <div className="flex items-baseline gap-3">
-          <span className="text-2xl text-arela-ink">{formatPrice(displayProduct.price)}</span>
+          <span className="font-price text-2xl text-arela-ink">{formatPrice(displayProduct.price)}</span>
           {displayProduct.compareAtPrice && (
-            <span className="text-sm text-arela-ink/40 line-through">
+            <span className="font-price text-sm text-arela-ink/40 line-through">
               {formatPrice(displayProduct.compareAtPrice)}
             </span>
           )}
@@ -149,7 +163,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   onClick={() => setSelectedVariantId(variant.id)}
                   disabled={variant.stock === 0}
                   className={cn(
-                    "rounded-full border px-4 py-2 text-xs uppercase tracking-wide transition-colors",
+                    "cursor-pointer rounded-full border px-4 py-2 text-xs uppercase tracking-wide transition-colors",
                     variant.id === selectedVariantId
                       ? "border-arela-ink bg-arela-ink text-arela-cream"
                       : "border-arela-ink/20 text-arela-ink/70 hover:border-arela-ink/50",
@@ -164,15 +178,40 @@ export function ProductDetail({ product }: { product: Product }) {
         )}
 
         {lowStock && (
-          <p className="text-xs font-medium uppercase tracking-wide text-arela-rust">
-            Últimas {selectedVariant?.stock} unidades disponibles
+          <p className="font-price text-xs font-medium uppercase tracking-wide text-arela-rust">
+            Últimas {availableStock} unidades disponibles
           </p>
         )}
 
-        <div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center rounded-full border border-arela-ink/15">
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              disabled={quantity <= 1}
+              aria-label="Disminuir cantidad"
+              className="flex h-10 w-10 cursor-pointer items-center justify-center text-arela-ink/70 transition-colors hover:text-arela-ink disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              −
+            </button>
+            <span className="font-price w-8 text-center text-sm text-arela-ink">{quantity}</span>
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+              disabled={quantity >= maxQuantity}
+              aria-label="Aumentar cantidad"
+              className="flex h-10 w-10 cursor-pointer items-center justify-center text-arela-ink/70 transition-colors hover:text-arela-ink disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              +
+            </button>
+          </div>
+
           <AddToCartButton
             product={displayProduct}
-            className={cn("w-full md:w-auto", !inStock && "pointer-events-none opacity-40")}
+            quantity={quantity}
+            size="lg"
+            label="Agregar al carrito"
+            className={cn("flex-1 md:flex-initial", !inStock && "pointer-events-none opacity-40")}
           />
         </div>
 
@@ -190,26 +229,43 @@ export function ProductDetail({ product }: { product: Product }) {
           </div>
         )}
 
-        <div className="flex flex-col gap-2 border-t border-arela-ink/10 pt-5">
-          <span className="text-xs uppercase tracking-widest text-arela-ink/50">Descripción</span>
-          <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">{product.description}</p>
+        <div className="border-t border-arela-ink/10 pt-5">
+          <div className="flex gap-6">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={cn(
+                  "cursor-pointer pb-2 text-xs uppercase tracking-widest transition-colors",
+                  activeTab === tab.key
+                    ? "border-b-2 border-arela-rust text-arela-ink"
+                    : "text-arela-ink/40 hover:text-arela-ink/70"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="pt-4">
+            {activeTab === "descripcion" && (
+              <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">
+                {product.description}
+              </p>
+            )}
+            {activeTab === "ingredientes" && product.ingredients && (
+              <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">
+                {product.ingredients.join(", ")}
+              </p>
+            )}
+            {activeTab === "como-usar" && product.howToUse && (
+              <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">
+                {product.howToUse}
+              </p>
+            )}
+          </div>
         </div>
-
-        {product.ingredients && product.ingredients.length > 0 && (
-          <div className="flex flex-col gap-2 border-t border-arela-ink/10 pt-5">
-            <span className="text-xs uppercase tracking-widest text-arela-ink/50">Ingredientes</span>
-            <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">
-              {product.ingredients.join(", ")}
-            </p>
-          </div>
-        )}
-
-        {product.howToUse && (
-          <div className="flex flex-col gap-2 border-t border-arela-ink/10 pt-5">
-            <span className="text-xs uppercase tracking-widest text-arela-ink/50">Cómo usar</span>
-            <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">{product.howToUse}</p>
-          </div>
-        )}
       </motion.div>
     </div>
   );

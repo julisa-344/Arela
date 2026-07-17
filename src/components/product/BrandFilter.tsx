@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { Select } from "@/components/ui/Select";
 
 interface BrandOption {
   id: string;
@@ -12,6 +13,11 @@ export function BrandFilter({ brands, selected }: { brands: BrandOption[]; selec
   const searchParams = useSearchParams();
 
   if (brands.length === 0) return null;
+
+  const options = [
+    { value: "", label: "Todas las marcas" },
+    ...brands.map((brand) => ({ value: brand.id, label: brand.name })),
+  ];
 
   function handleChange(value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -25,17 +31,6 @@ export function BrandFilter({ brands, selected }: { brands: BrandOption[]; selec
   }
 
   return (
-    <select
-      value={selected ?? ""}
-      onChange={(e) => handleChange(e.target.value)}
-      className="rounded-full border border-arela-ink/20 bg-transparent px-4 py-2 text-xs uppercase tracking-widest text-arela-ink outline-none transition-colors hover:border-arela-ink/40"
-    >
-      <option value="">Todas las marcas</option>
-      {brands.map((brand) => (
-        <option key={brand.id} value={brand.id}>
-          {brand.name}
-        </option>
-      ))}
-    </select>
+    <Select value={selected ?? ""} onChange={handleChange} options={options} className="w-56" />
   );
 }

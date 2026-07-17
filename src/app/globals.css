@@ -11,6 +11,7 @@
   font-weight: 100;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
 @font-face {
@@ -19,6 +20,7 @@
   font-weight: 300;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
 @font-face {
@@ -27,6 +29,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
 @font-face {
@@ -35,6 +38,7 @@
   font-weight: 700;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
 @font-face {
@@ -43,6 +47,7 @@
   font-weight: 800;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
 @font-face {
@@ -51,6 +56,7 @@
   font-weight: 900;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
 @font-face {
@@ -60,6 +66,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-002F, U+003A-10FFFF;
 }
 
 :root {
@@ -73,7 +80,7 @@
   /* Texto casi blanco para usar sobre video/imagenes oscuras (ej. header transparente sobre el hero) */
   --color-arela-white: #fdfbf7;
 
-  --background: var(--color-arela-cream);
+  --background: var(--color-arela-white);
   --foreground: var(--color-arela-ink);
 }
 
@@ -97,4 +104,13 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+@layer utilities {
+  /* Codec Warm/TAN Mon Cheri no renderizan bien los digitos en algunos navegadores;
+     precios y contadores usan la pila segura del sistema. */
+  .font-price {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
 }

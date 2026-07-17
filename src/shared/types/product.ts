@@ -29,6 +29,7 @@ export interface Product {
   isFeatured: boolean;
   isNew: boolean;
   inStock: boolean;
+  stock?: number;
   hasVariants: boolean;
   variants: ProductVariantOption[];
 }

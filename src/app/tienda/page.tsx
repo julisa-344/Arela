@@ -78,7 +78,7 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
         </div>
       </FadeIn>
 
-      <Stagger className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+      <Stagger className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3">
         {products.length > 0 ? (
           products.map((product) => (
             <StaggerItem key={product.slug}>

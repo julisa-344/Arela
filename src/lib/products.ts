@@ -53,6 +53,7 @@ function toDisplayProduct(fp: FirestoreProduct): Product {
     isFeatured: fp.isFeatured,
     isNew: fp.isNew,
     inStock,
+    stock: fp.hasVariants ? undefined : fp.baseStock,
     hasVariants: fp.hasVariants,
     variants,
   };
@@ -103,6 +104,11 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (snapshot.empty) return null;
   const doc = snapshot.docs[0];
   return toDisplayProduct({ id: doc.id, ...doc.data() } as FirestoreProduct);
+}
+
+export async function getRelatedProducts(product: Product, limitCount = 4): Promise<Product[]> {
+  const sameCategory = await getAllProducts({ categoryId: product.categoryId });
+  return sameCategory.filter((p) => p.slug !== product.slug).slice(0, limitCount);
 }
 
 export async function getAllCategories() {
