@@ -1,3 +1,8 @@
+export interface ProductIngredient {
+  name: string;
+  description: string;
+}
+
 export interface ProductVariantOption {
   id: string;
   name: string;
@@ -26,6 +31,10 @@ export interface Product {
   benefits: string[];
   ingredients?: string[];
   howToUse?: string;
+  compositionIngredients?: ProductIngredient[];
+  resultOfApplication?: string;
+  texture?: string;
+  aroma?: string;
   isFeatured: boolean;
   isNew: boolean;
   inStock: boolean;

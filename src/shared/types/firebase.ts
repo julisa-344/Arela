@@ -12,6 +12,11 @@ export interface ProductVariant {
   attributes: Record<string, string>; // { "color": "rosa", "tamaño": "50ml" }
 }
 
+export interface ProductIngredient {
+  name: string; // Ej: "Aceite de Jojoba"
+  description: string; // Ej: "Retiene la hidratación y suaviza la piel seca."
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -43,6 +48,10 @@ export interface Product {
   benefits: string[]; // ["Hidratación 24h", "Antiarrugas"]
   ingredients?: string[];
   howToUse?: string;
+  compositionIngredients?: ProductIngredient[];
+  resultOfApplication?: string;
+  texture?: string;
+  aroma?: string;
   
   // SEO y metadata
   tags: string[];

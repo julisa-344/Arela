@@ -33,6 +33,11 @@ const BRANDS: Record<string, string> = {
   "beauty-creations": "Beauty Creations",
 };
 
+interface ProductIngredientUpdate {
+  name: string;
+  description: string;
+}
+
 interface ProductUpdate {
   slug: string;
   name: string;
@@ -43,6 +48,11 @@ interface ProductUpdate {
   isFeatured?: boolean;
   isNew?: boolean;
   tags?: string[];
+  compositionIngredients?: ProductIngredientUpdate[];
+  howToUse?: string;
+  resultOfApplication?: string;
+  texture?: string;
+  aroma?: string;
 }
 
 const PRODUCTS: ProductUpdate[] = [
@@ -59,6 +69,17 @@ const PRODUCTS: ProductUpdate[] = [
       "Hidratación profunda sin sensación grasosa.",
       "Ideal para piel opaca, seca o deshidratada.",
     ],
+    compositionIngredients: [
+      { name: "Extracto de Arroz (70%)", description: "Ilumina el tono y nutre en profundidad." },
+      { name: "Niacinamida", description: "Ayuda a unificar el color de la piel." },
+      { name: "Aceite de Salvado de Arroz", description: "Suaviza y aporta nutrición extra." },
+    ],
+    howToUse:
+      "Aplica sobre el rostro limpio como último paso de tu rutina de hidratación, mañana y noche, masajeando hasta su total absorción.",
+    resultOfApplication:
+      "Piel visiblemente más luminosa, suave y de tono uniforme desde las primeras semanas de uso.",
+    texture: "Líquida y lechosa, se desliza con facilidad y se absorbe rápido sin dejar residuo graso.",
+    aroma: "Suave y cálido, con notas ligeras de arroz.",
   },
   {
     slug: "celimax-the-real-noni-starter-kit-3-piezas",
@@ -74,6 +95,17 @@ const PRODUCTS: ProductUpdate[] = [
       "Repara la barrera cutánea debilitada.",
       "Ideal para probar la rutina completa.",
     ],
+    compositionIngredients: [
+      { name: "Extracto de Fruta de Noni", description: "Antioxidante y calmante natural." },
+      { name: "Niacinamida", description: "Ilumina y unifica el tono de la piel." },
+      { name: "Centella Asiática", description: "Repara y fortalece la barrera cutánea." },
+    ],
+    howToUse:
+      "Usa en este orden sobre piel limpia: tónico Noni, luego el suero y finalmente la crema, en tu rutina de mañana y noche.",
+    resultOfApplication:
+      "Piel calmada, con menos rojeces y una barrera cutánea visiblemente fortalecida tras dos semanas.",
+    texture: "Tónico ligero tipo agua, suero sedoso de rápida absorción y crema cremosa no grasa.",
+    aroma: "Herbal suave, con un toque afrutado propio del Noni.",
   },
   {
     slug: "celimax-the-vita-a-retinol-shot-tightening-serum-30ml",
@@ -90,6 +122,17 @@ const PRODUCTS: ProductUpdate[] = [
       "Minimiza el riesgo de irritación cutánea.",
       "Mejora la firmeza y elasticidad general.",
     ],
+    compositionIngredients: [
+      { name: "Retinol (Vitamina A)", description: "Estimula la producción natural de colágeno." },
+      { name: "Adenosina", description: "Ayuda a suavizar las líneas de expresión." },
+      { name: "Centella Asiática", description: "Calma la piel y reduce la irritación." },
+    ],
+    howToUse:
+      "Aplica 2-3 gotas por la noche sobre piel seca y limpia, evitando el contorno de ojos. Usa protector solar al día siguiente.",
+    resultOfApplication:
+      "Piel más firme y tersa, con líneas de expresión visiblemente suavizadas desde las 4 semanas.",
+    texture: "Suero denso y ligeramente aceitoso que se absorbe dejando un acabado sedoso.",
+    aroma: "Neutro, casi imperceptible.",
   },
   {
     slug: "dr-althea-0-1-gentle-retinol-serum-30ml",
@@ -105,6 +148,17 @@ const PRODUCTS: ProductUpdate[] = [
       "Enriquecido con ingredientes calmantes.",
       "Previene el enrojecimiento de la piel.",
     ],
+    compositionIngredients: [
+      { name: "Retinol 0.1%", description: "Concentración suave que impulsa la renovación celular." },
+      { name: "Ceramidas", description: "Refuerzan la barrera cutánea." },
+      { name: "Extracto de Centella", description: "Calma la piel y previene el enrojecimiento." },
+    ],
+    howToUse:
+      "Aplica por la noche 2-3 veces por semana al inicio, aumentando gradualmente la frecuencia según la tolerancia de tu piel.",
+    resultOfApplication:
+      "Textura más uniforme y poros refinados, con una notable disminución de líneas finas.",
+    texture: "Suero ligero y fluido, de absorción rápida.",
+    aroma: "Suave, sin fragancia añadida.",
   },
   {
     slug: "dr-althea-147-barrier-cream-50ml",
@@ -121,6 +175,17 @@ const PRODUCTS: ProductUpdate[] = [
       "Protege la piel contra factores ambientales.",
       "Ideal para usar post-exfoliación.",
     ],
+    compositionIngredients: [
+      { name: "Ceramida NP", description: "Restaura y refuerza la barrera cutánea." },
+      { name: "Manteca de Karité", description: "Nutre profundamente la piel reseca." },
+      { name: "Alantoína", description: "Calma la irritación y la picazón." },
+    ],
+    howToUse:
+      "Aplica una capa generosa sobre las zonas afectadas o en todo el rostro como último paso, tantas veces como lo necesite tu piel.",
+    resultOfApplication:
+      "Alivio inmediato de la sequedad y descamación, con la piel visiblemente más calmada en 24 horas.",
+    texture: "Bálsamo denso tipo ungüento que se funde con el calor de la piel.",
+    aroma: "Neutro y suave.",
   },
   {
     slug: "dr-althea-amino-acid-gentle-bubble-cleanser-140ml",
@@ -136,6 +201,16 @@ const PRODUCTS: ProductUpdate[] = [
       "Evita la sensación de tirantez o acartonamiento.",
       "Deja la piel suave, fresca y limpia.",
     ],
+    compositionIngredients: [
+      { name: "Aminoácidos", description: "Limpian la piel respetando su pH natural." },
+      { name: "Pantenol", description: "Hidrata y calma mientras limpia." },
+      { name: "Extracto de Centella", description: "Calma la piel tras la limpieza." },
+    ],
+    howToUse:
+      "Presiona el dispensador para obtener la espuma, masajea sobre rostro húmedo y enjuaga con agua tibia.",
+    resultOfApplication: "Piel limpia, suave y sin tirantez, lista para el resto de tu rutina.",
+    texture: "Espuma densa y aireada que se forma automáticamente al presionar el dispensador.",
+    aroma: "Fresco y ligero.",
   },
   {
     slug: "dr-althea-aqua-marine-jelly-mist-100ml",
@@ -151,6 +226,16 @@ const PRODUCTS: ProductUpdate[] = [
       "Se puede usar encima del maquillaje.",
       "Formato práctico para llevar en el bolso.",
     ],
+    compositionIngredients: [
+      { name: "Agua Marina", description: "Remineraliza y refresca la piel." },
+      { name: "Ácido Hialurónico", description: "Retiene la hidratación por más tiempo." },
+      { name: "Pantenol", description: "Calma y suaviza la piel." },
+    ],
+    howToUse:
+      "Agita antes de usar y aplica a distancia sobre el rostro, mañana, tarde o encima del maquillaje cuando necesites un refresco.",
+    resultOfApplication: "Hidratación instantánea y sensación de frescura que dura varias horas.",
+    texture: "Gel que se transforma en una fina bruma líquida al pulverizar.",
+    aroma: "Marino suave y fresco.",
   },
   {
     slug: "dr-althea-aqua-marine-watery-cream-50ml",
@@ -166,6 +251,16 @@ const PRODUCTS: ProductUpdate[] = [
       "Ideal para pieles mixtas a grasas.",
       "Perfecta para uso en climas cálidos.",
     ],
+    compositionIngredients: [
+      { name: "Agua Marina", description: "Remineraliza e hidrata en profundidad." },
+      { name: "Ácido Hialurónico", description: "Retiene el agua en la piel." },
+      { name: "Extracto de Algas", description: "Refresca y equilibra el cutis." },
+    ],
+    howToUse: "Aplica como último paso de tu rutina, mañana y noche, sobre el rostro limpio.",
+    resultOfApplication:
+      "Piel hidratada y fresca, sin sensación grasosa, ideal para climas cálidos.",
+    texture: "Gel-crema ligero que se absorbe rápido dejando un acabado húmedo no graso.",
+    aroma: "Fresco, con un toque marino.",
   },
   {
     slug: "dr-althea-gentle-pore-cleansing-oil-150ml",
@@ -181,6 +276,16 @@ const PRODUCTS: ProductUpdate[] = [
       "Se emulsiona y enjuaga fácilmente con agua.",
       "No deja ningún residuo graso en el rostro.",
     ],
+    compositionIngredients: [
+      { name: "Aceite de Jojoba", description: "Disuelve el maquillaje sin resecar la piel." },
+      { name: "Aceite de Girasol", description: "Nutre mientras limpia en profundidad." },
+      { name: "Extracto de Té Verde", description: "Antioxidante que protege la piel." },
+    ],
+    howToUse:
+      "Aplica sobre rostro seco, masajea para disolver el maquillaje y protector solar, emulsiona con agua y enjuaga.",
+    resultOfApplication: "Piel limpia en profundidad, suave y sin sensación de tirantez.",
+    texture: "Aceite ligero que se emulsiona fácilmente en contacto con el agua.",
+    aroma: "Suave y herbal.",
   },
   {
     slug: "dr-althea-multi-action-infusion-serum-30ml",
@@ -196,6 +301,16 @@ const PRODUCTS: ProductUpdate[] = [
       "Simplifica la rutina en un solo paso.",
       "Textura ligera de rápida penetración.",
     ],
+    compositionIngredients: [
+      { name: "Niacinamida", description: "Unifica el tono de la piel." },
+      { name: "Complejo de Péptidos", description: "Combate los signos de la edad." },
+      { name: "Ácido Hialurónico", description: "Hidrata en profundidad." },
+    ],
+    howToUse: "Aplica 2-3 gotas sobre rostro limpio, mañana y noche, antes de tu crema hidratante.",
+    resultOfApplication:
+      "Tono más uniforme, piel hidratada y signos de fatiga visiblemente reducidos.",
+    texture: "Suero ligero de absorción rápida.",
+    aroma: "Neutro.",
   },
   {
     slug: "k-secret-retinal-liposome-2-seoul-1988-30ml",
@@ -213,6 +328,17 @@ const PRODUCTS: ProductUpdate[] = [
       "Minimiza drásticamente la sensibilidad cutánea.",
       "Maximiza la eficacia antiedad del producto.",
     ],
+    compositionIngredients: [
+      { name: "Retinaldehído (Retinal) 2%", description: "Renovación celular acelerada." },
+      { name: "Liposomas", description: "Mejoran la absorción y reducen la irritación." },
+      { name: "Extracto de Centella", description: "Calma y repara la piel." },
+    ],
+    howToUse:
+      "Aplica por la noche 2-3 veces por semana al inicio, sobre piel limpia y seca, incrementando la frecuencia según tolerancia. Usa protector solar al día siguiente.",
+    resultOfApplication:
+      "Reducción visible de arrugas, manchas y flacidez, con mínima irritación frente al retinol tradicional.",
+    texture: "Suero ligero encapsulado en liposomas, de rápida absorción.",
+    aroma: "Neutro, sin fragancia.",
   },
   {
     slug: "brocha-diagonal-classic",
@@ -376,6 +502,11 @@ async function main() {
       shortDescription,
       description,
       benefits: product.benefits,
+      ...(product.compositionIngredients ? { compositionIngredients: product.compositionIngredients } : {}),
+      ...(product.howToUse ? { howToUse: product.howToUse } : {}),
+      ...(product.resultOfApplication ? { resultOfApplication: product.resultOfApplication } : {}),
+      ...(product.texture ? { texture: product.texture } : {}),
+      ...(product.aroma ? { aroma: product.aroma } : {}),
       isFeatured: Boolean(product.isFeatured),
       isNew: Boolean(product.isNew),
       isActive: true,

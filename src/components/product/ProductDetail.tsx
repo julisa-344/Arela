@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import type { Product } from "@/shared/types/product";
 import { formatPrice } from "@/lib/format";
 import { AddToCartButton } from "@/components/product/AddToCartButton";
+import { IngredientDiagram } from "@/components/product/IngredientDiagram";
+import { Accordion, type AccordionItemData } from "@/components/ui/Accordion";
 import { cn } from "@/lib/cn";
 
 function CheckIcon() {
@@ -21,8 +23,6 @@ function CheckIcon() {
     </svg>
   );
 }
-
-type TabKey = "descripcion" | "ingredientes" | "como-usar";
 
 export function ProductDetail({ product }: { product: Product }) {
   const [activeImage, setActiveImage] = useState(0);
@@ -55,14 +55,58 @@ export function ProductDetail({ product }: { product: Product }) {
   const inStock = selectedVariant ? selectedVariant.stock > 0 : product.inStock;
   const maxQuantity = typeof availableStock === "number" ? Math.max(availableStock, 1) : 99;
 
-  const tabs: { key: TabKey; label: string }[] = [
-    { key: "descripcion", label: "Descripción" },
+  const accordionItems: AccordionItemData[] = [
+    {
+      key: "descripcion",
+      title: "Descripción",
+      content: <p>{product.description}</p>,
+    },
     ...(product.ingredients && product.ingredients.length > 0
-      ? [{ key: "ingredientes" as TabKey, label: "Ingredientes" }]
+      ? [
+          {
+            key: "composicion",
+            title: "Composición / Ingredientes",
+            content: <p>{product.ingredients.join(", ")}</p>,
+          },
+        ]
       : []),
-    ...(product.howToUse ? [{ key: "como-usar" as TabKey, label: "Cómo usar" }] : []),
+    ...(product.howToUse
+      ? [
+          {
+            key: "como-usar",
+            title: "Cómo usar",
+            content: <p>{product.howToUse}</p>,
+          },
+        ]
+      : []),
+    ...(product.resultOfApplication
+      ? [
+          {
+            key: "resultado",
+            title: "Resultado de la aplicación",
+            content: <p>{product.resultOfApplication}</p>,
+          },
+        ]
+      : []),
+    ...(product.texture
+      ? [
+          {
+            key: "textura",
+            title: "Textura",
+            content: <p>{product.texture}</p>,
+          },
+        ]
+      : []),
+    ...(product.aroma
+      ? [
+          {
+            key: "aroma",
+            title: "Aroma",
+            content: <p>{product.aroma}</p>,
+          },
+        ]
+      : []),
   ];
-  const [activeTab, setActiveTab] = useState<TabKey>("descripcion");
 
   return (
     <div className="grid gap-10 py-16 md:grid-cols-2 md:gap-16">
@@ -229,44 +273,29 @@ export function ProductDetail({ product }: { product: Product }) {
           </div>
         )}
 
-        <div className="border-t border-arela-ink/10 pt-5">
-          <div className="flex gap-6">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => setActiveTab(tab.key)}
-                className={cn(
-                  "cursor-pointer pb-2 text-xs uppercase tracking-widest transition-colors",
-                  activeTab === tab.key
-                    ? "border-b-2 border-arela-rust text-arela-ink"
-                    : "text-arela-ink/40 hover:text-arela-ink/70"
-                )}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="pt-4">
-            {activeTab === "descripcion" && (
-              <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">
-                {product.description}
-              </p>
-            )}
-            {activeTab === "ingredientes" && product.ingredients && (
-              <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">
-                {product.ingredients.join(", ")}
-              </p>
-            )}
-            {activeTab === "como-usar" && product.howToUse && (
-              <p className="max-w-md text-sm leading-relaxed text-arela-ink/70">
-                {product.howToUse}
-              </p>
-            )}
-          </div>
-        </div>
+        <Accordion items={accordionItems} defaultOpenKey="descripcion" />
       </motion.div>
+
+      {product.compositionIngredients && product.compositionIngredients.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="md:col-span-2"
+        >
+          <div className="border-t border-arela-ink/10 pt-10">
+            <h2 className="mb-6 text-center text-xs uppercase tracking-[0.2em] text-arela-ink/50">
+              Ingredientes clave
+            </h2>
+            <IngredientDiagram
+              image={gallery[0] ?? product.image}
+              alt={product.name}
+              ingredients={product.compositionIngredients}
+            />
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }
