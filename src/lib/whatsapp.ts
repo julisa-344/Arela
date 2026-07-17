@@ -7,6 +7,10 @@ function buildWhatsappUrl(message: string) {
   return `https://wa.me/${SITE.whatsappNumber}?text=${encoded}`;
 }
 
+export function whatsappGeneralUrl() {
+  return buildWhatsappUrl("Hola Arela! Quisiera hacer una consulta.");
+}
+
 export function whatsappProductUrl(productName: string) {
   const message = `Hola Arela! Quisiera consultar por: ${productName}`;
   return buildWhatsappUrl(message);

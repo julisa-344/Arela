@@ -10,17 +10,17 @@ function IngredientRow({
 }) {
   const text = (
     <div className={align === "left" ? "text-right" : "text-left"}>
-      <p className="text-xs font-medium uppercase tracking-widest text-arela-ink">
+      <p className="text-sm font-semibold uppercase tracking-widest text-arela-ink">
         {ingredient.name}
       </p>
       <p className="mt-1 text-xs leading-relaxed text-arela-ink/55">{ingredient.description}</p>
     </div>
   );
-  const line = <span className="hidden h-px flex-1 bg-arela-ink/20 md:block" />;
-  const dot = <span className="hidden h-1.5 w-1.5 shrink-0 rounded-full bg-arela-rust md:block" />;
+  const line = <span className="hidden h-[1.5px] flex-1 bg-arela-rust/40 md:block" />;
+  const dot = <span className="hidden h-2 w-2 shrink-0 rounded-full bg-arela-rust md:block" />;
 
   return (
-    <div className="flex max-w-[220px] items-center gap-3">
+    <div className="flex max-w-[240px] items-center gap-3">
       {align === "left" ? (
         <>
           {text}
@@ -60,7 +60,7 @@ export function IngredientDiagram({
         ))}
       </div>
 
-      <div className="relative mx-auto aspect-square w-56 shrink-0 overflow-hidden rounded-full bg-arela-honey/20 md:w-64">
+      <div className="relative mx-auto aspect-square w-64 shrink-0 overflow-hidden rounded-full bg-arela-honey/20 shadow-[0_0_0_1px_rgba(43,10,5,0.06),0_24px_48px_-16px_rgba(43,10,5,0.25)] md:w-80">
         <Image src={image} alt={alt} fill className="object-cover" />
       </div>
 

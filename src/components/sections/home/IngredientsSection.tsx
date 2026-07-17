@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
+import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 
 export function IngredientsSection() {
   return (
@@ -22,8 +23,16 @@ export function IngredientsSection() {
         </FadeIn>
 
         <FadeIn delay={0.15} className="grid grid-cols-2 gap-4">
-          <div className="aspect-square rounded-2xl bg-arela-terracotta/30" />
-          <div className="mt-8 aspect-square rounded-2xl bg-arela-rust/30" />
+          <ImagePlaceholder
+            tone="rust"
+            hint="Ingrediente natural en primer plano (ej. arroz, centella, jojoba)"
+            className="aspect-square"
+          />
+          <ImagePlaceholder
+            tone="honey"
+            hint="Textura del producto extendida sobre la piel"
+            className="mt-8 aspect-square"
+          />
         </FadeIn>
       </Container>
     </section>
