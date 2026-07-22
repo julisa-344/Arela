@@ -1,17 +1,21 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/format";
-import { whatsappCartUrl } from "@/lib/whatsapp";
+import { whatsappCartUrl, type ShippingDetails } from "@/lib/whatsapp";
+import { SHIPPING } from "@/shared/constants/site";
 
 export default function CarritoPage() {
   const { items, updateQuantity, removeItem, totalPrice } = useCart();
+  const [showShippingForm, setShowShippingForm] = useState(false);
 
   if (items.length === 0) {
     return (
@@ -23,6 +27,21 @@ export default function CarritoPage() {
         </Container>
       </FadeIn>
     );
+  }
+
+  function handleShippingSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    const shipping: ShippingDetails = {
+      nombre: String(formData.get("nombre") ?? ""),
+      telefono: String(formData.get("telefono") ?? ""),
+      direccion: String(formData.get("direccion") ?? ""),
+      distrito: String(formData.get("distrito") ?? ""),
+      referencia: String(formData.get("referencia") ?? "") || undefined,
+    };
+
+    window.open(whatsappCartUrl(items, shipping), "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -90,20 +109,56 @@ export default function CarritoPage() {
         ))}
       </Stagger>
 
-      <FadeIn delay={0.1} className="mt-10 flex flex-col items-end gap-4">
+      <FadeIn delay={0.1} className="mt-10 flex flex-col items-end gap-2">
+        <div className="flex items-baseline gap-3">
+          <span className="text-xs uppercase tracking-widest text-arela-ink/50">Subtotal</span>
+          <span className="font-price text-sm text-arela-ink">{formatPrice(totalPrice)}</span>
+        </div>
+        <div className="flex items-baseline gap-3">
+          <span className="text-xs uppercase tracking-widest text-arela-ink/50">Envio</span>
+          <span className="font-price text-sm text-arela-ink">{formatPrice(SHIPPING.cost)}</span>
+        </div>
         <div className="flex items-baseline gap-3">
           <span className="text-xs uppercase tracking-widest text-arela-ink/50">Total</span>
-          <span className="font-price text-xl text-arela-ink">{formatPrice(totalPrice)}</span>
+          <span className="font-price text-xl text-arela-ink">
+            {formatPrice(totalPrice + SHIPPING.cost)}
+          </span>
         </div>
+        <p className="mt-1 text-xs text-arela-ink/50">
+          Envio {SHIPPING.zone.toLowerCase()}: {formatPrice(SHIPPING.cost)}, llega en {SHIPPING.estimatedTime}.
+        </p>
 
-        <Button
-          href={whatsappCartUrl(items)}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          finalizar pedido por whatsapp
-        </Button>
+        {!showShippingForm && (
+          <Button className="mt-4" onClick={() => setShowShippingForm(true)}>
+            finalizar pedido por whatsapp
+          </Button>
+        )}
       </FadeIn>
+
+      {showShippingForm && (
+        <FadeIn delay={0.05} className="mt-10 border-t border-arela-ink/10 pt-10">
+          <h2 className="font-display text-xl text-arela-ink">Datos de envio</h2>
+          <p className="mt-2 text-sm text-arela-ink/60">
+            Completa tus datos y te llevaremos a WhatsApp con tu pedido listo para confirmar.
+          </p>
+
+          <form onSubmit={handleShippingSubmit} className="mt-8 flex flex-col gap-6">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Input name="nombre" label="Nombre completo" required />
+              <Input name="telefono" label="Telefono" type="tel" required />
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Input name="direccion" label="Direccion" required />
+              <Input name="distrito" label="Distrito / ciudad" required />
+            </div>
+            <Input name="referencia" label="Referencia (opcional)" />
+
+            <Button type="submit" className="w-fit">
+              enviar pedido por whatsapp
+            </Button>
+          </form>
+        </FadeIn>
+      )}
     </Container>
   );
 }

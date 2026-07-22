@@ -1,22 +1,22 @@
-import { Container } from "@/components/layout/Container";
-import { FadeIn } from "@/components/motion/FadeIn";
+import { AboutHero } from "@/components/sections/nosotros/AboutHero";
+import { ReasonsSection } from "@/components/sections/nosotros/ReasonsSection";
+import { PillarsSection } from "@/components/sections/nosotros/PillarsSection";
+import { TeamSection } from "@/components/sections/nosotros/TeamSection";
+import { AboutCTA } from "@/components/sections/nosotros/AboutCTA";
+import { SITE } from "@/shared/constants/site";
 
 export const metadata = {
-  title: "Nosotros | Arela",
+  title: `Nosotros | ${SITE.name}`,
 };
 
 export default function NosotrosPage() {
   return (
-    <Container className="max-w-3xl py-20">
-      <FadeIn>
-        <h1 className="font-display text-4xl text-arela-ink">nosotros</h1>
-        <p className="mt-6 text-sm leading-relaxed text-arela-ink/70">
-          Arela nace de la conviccion de que el cuidado de la piel puede ser efectivo, consciente y
-          cercano. Trabajamos con ingredientes seleccionados y formulas pensadas para acompañar tu
-          rutina diaria, cuidando tanto tu piel como el entorno que nos rodea.
-        </p>
-        {/* TODO: reemplazar con la historia real de la marca, equipo, valores, etc. */}
-      </FadeIn>
-    </Container>
+    <>
+      <AboutHero />
+      <ReasonsSection />
+      <PillarsSection />
+      <TeamSection />
+      <AboutCTA />
+    </>
   );
 }

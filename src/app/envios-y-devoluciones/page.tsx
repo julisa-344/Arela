@@ -1,15 +1,11 @@
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { SITE } from "@/shared/constants/site";
+import { SITE, SHIPPING } from "@/shared/constants/site";
+import { formatPrice } from "@/lib/format";
 
 export const metadata = {
   title: `Envios y devoluciones | ${SITE.name}`,
 };
-
-const SHIPPING = [
-  { zone: "Lima Metropolitana", time: "1 a 3 dias utiles", cost: "Segun distrito, se confirma por WhatsApp" },
-  { zone: "Provincias (agencia)", time: "3 a 7 dias utiles", cost: "Segun agencia y destino" },
-];
 
 export default function EnviosYDevolucionesPage() {
   return (
@@ -20,8 +16,8 @@ export default function EnviosYDevolucionesPage() {
         <section className="mt-10">
           <h2 className="font-display text-lg text-arela-ink">Envios</h2>
           <p className="mt-2 text-sm leading-relaxed text-arela-ink/70">
-            Una vez confirmado tu pedido por WhatsApp, coordinamos el envio segun tu ubicacion. Estos
-            son los tiempos referenciales:
+            Manejamos una tarifa unica de envio {SHIPPING.zone.toLowerCase()}, sin importar tu
+            distrito o ciudad. Una vez confirmado tu pedido por WhatsApp, coordinamos la entrega:
           </p>
 
           <div className="mt-6 overflow-hidden rounded-xl border border-arela-ink/10">
@@ -34,13 +30,11 @@ export default function EnviosYDevolucionesPage() {
                 </tr>
               </thead>
               <tbody>
-                {SHIPPING.map((row) => (
-                  <tr key={row.zone} className="border-t border-arela-ink/10">
-                    <td className="px-4 py-3 text-arela-ink">{row.zone}</td>
-                    <td className="px-4 py-3 text-arela-ink/70">{row.time}</td>
-                    <td className="px-4 py-3 text-arela-ink/70">{row.cost}</td>
-                  </tr>
-                ))}
+                <tr className="border-t border-arela-ink/10">
+                  <td className="px-4 py-3 text-arela-ink">{SHIPPING.zone}</td>
+                  <td className="px-4 py-3 text-arela-ink/70">{SHIPPING.estimatedTime}</td>
+                  <td className="px-4 py-3 text-arela-ink/70">{formatPrice(SHIPPING.cost)}</td>
+                </tr>
               </tbody>
             </table>
           </div>
